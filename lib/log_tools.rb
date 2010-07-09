@@ -2,7 +2,19 @@
 require "shellwords"
 require "active_support"
 
-#dirty parser for output.
+# Reads directory structure from the harddrive into a hash 
+#     {
+#       '.' => ['list', 'of', 'files'], #root level
+#       'folder' => {
+#         '.' => ['list', 'of', 'files'], #folder's files
+#         'subfolder' => {
+#           '.' => ['list', 'of', 'files'], #subfolder's files
+#           'empty_folder' => {'.' => [], },
+#         }
+#       },
+#       'empty_folder' => {'.' => [], },
+#     }
+# <tt>folder</tt> must be a string, and can optionally have a trailing slash
 def extract_filelist(folder)
   return {'.' => []} if folder.nil?
   folder = File.expand_path(folder)
@@ -51,84 +63,39 @@ def extract_filelist(folder)
   file_list
 end #def extract_files
 
-=begin
-Format: (see man page for ls)
---
-marquis@shiny:~$ ls -1ARp /Users/marquis/programming/test_data/irclogs|head
-FreeNode/
-SFF/
-
-/Users/marquis/programming/test_data/irclogs/FreeNode:
-##elite/
-##jswolfbot/
-##uno-nightd/
-##uno-nights/
-#cloudservers/
-#couchdb/
---
-
-Want to parse this into 
-{
-  :folder => {
-    :subfolder => {
-      :subsubfolder =>{
-        :"." => [array of filenames]
-      },
-      :subsubfolder =>{
-        :"." => [array of filenames]
-      },
-      :"." => [array of filenames]
-    },
-    :subfolder => {
-      :"." => [array of filenames]
-    }
-    :"." => [array of filenames]
-  }
-  :folder => {
-    :"." => [array of filenames]
-  }
-  :"." => [array of filenames]
-}
-
-<irc_log_path>
-path: POSIX path
-cwd: <path>:\n
-item:
-  file: <path>\n
-  -or-
-  folder: <path>/\n 
-seperator: \n
-block:
-  <cwd>?<item>*<seperator>
-data:
-  <block>*
-
-Parse into <block> by spliting by /\n\n/
-  First <block> omits <cwd>, handle as special case
-  Parse each <block> into <root> and <items> by spliting by /\n/
-    Parse root into elements by [1]
-    
-    
-[1] 
-# I've looked through ruby's library for a safe version of this, no luck
-# this is a bit hackish, I don't like it.
-ruby-1.9.1-p378 > two = "/Users/marquis/programming/test_data/irclogs"
- => "/Users/marquis/programming/test_data/irclogs"
-ruby-1.9.1-p378 > one = "/Users/marquis/programming/test_data/irclogs/FreeNode/two"
- => "/Users/marquis/programming/test_data/irclogs/FreeNode/two"
-ruby-1.9.1-p378 > one[two.length..-1]
- => "/FreeNode/two" 
-#if there is a / at the front we can do [1..-1] to remote it.
-ruby-1.9.1-p378 > one[two.length..-1][1..-1]
- => "FreeNode/two" 
-
-
-
-=end
+# Convert a filelist hash into a loglist hash
+#     {
+#       'server' => {
+#         'chatroom' => ['log', 'files'], #log files
+#         'chatroom' => ['log', 'files'], #log files
+#         'chatroom' => ['log', 'files'], #log files
+#       },
+#       'server' => {
+#         'chatroom' => ['log', 'files'], #log files
+#         'chatroom' => ['log', 'files'], #log files
+#         'chatroom' => ['log', 'files'], #log files
+#       },
+#     }
+# <tt>hash</tt> must be in the same format as the output from <tt>extract_filelist</tt>
+def filelist_to_loglist(hash)
+  loglist = {}
+  hash.select{|v| v != '.'}.each do |server, chatrooms|
+    loglist[server] = {}
+    chatrooms.select{|v| v != '.'}.each do |room, logs|
+      loglist[server][room] = logs['.'].map do |filename|
+        filename.gsub(%r{.*?(\d{8})\.log}, '\\1')
+      end
+    end
+  end
+  loglist.each do |server, chatrooms|
+    chatrooms.reject!{ |room, logs| logs.empty? } unless chatrooms.empty?
+  end
+  loglist.select{|server, chatrooms| !chatrooms.empty? }
+end
 
 #rolled my own testing because I'm away from my ruby book and the internet :'(
 if __FILE__ == $0
-  puts "Running test"
+  puts "Running test for extract_filelist"
   expected = ({
     '.' => ['4', '5', '6'],
     '1' => {
@@ -147,7 +114,44 @@ if __FILE__ == $0
   actual = extract_filelist(File.expand_path("../tests/data/", File.dirname(__FILE__)))
   if actual != expected
     puts "Fail!"
+    puts "Expected"
     puts expected
+    puts "Actual"
+    puts actual
+  else
+    puts "Pass"
+  end
+  
+  puts "Running test for filelist_to_loglist"
+  data = ({
+    '.' => ['4', '5', '6'],
+    '1' => {
+      '.' => ['7', '8'],
+      '10' => {
+        '.' => ['nickserv_20100602.log', 'nickserv_20100603.log', 'nickserv_20100604.log'],
+      },
+    },
+    '2' => {
+      '.' => ['9'],
+      '11' => {
+        '.' => [],
+      }
+    },
+    '3' => {
+      '.' => [],
+    },
+  })
+  expected = ({
+    '1' => {
+      '10' => ['20100602', '20100603', '20100604'],
+    },
+  })
+  actual = filelist_to_loglist(data)
+  if actual != expected
+    puts "Fail!"
+    puts "Expected"
+    puts expected
+    puts "Actual"
     puts actual
   else
     puts "Pass"
