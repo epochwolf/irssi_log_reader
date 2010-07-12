@@ -1,13 +1,16 @@
-== Irssi Log Reader ==
+Irssi Log Reader
+================
 
 An application to read and grep irssi logs.
 
-== Features == 
+Features
+--------
 
 * View logs listed by Server > Chatroom > Date
 * Grep logs by Server > Chatroom
 
-== Irssi Autolog Configuration ==
+Irssi Autolog Configuration
+===========================
 
 This program is designed to work with irssi's logging functionality. 
 
@@ -30,6 +33,8 @@ These are the settings I use for my logs. I find a need for daily log rotation.
 
 This format is required because it's been hardcoded into the application.
 
-== Cronjobs ==
+Cronjobs
+========
+
 A nightly cronjob is required to update the file list cache. 
 
