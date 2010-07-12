@@ -1,7 +1,14 @@
-== Title of App ==
-Explain the application
+== Irssi Log Reader ==
+
+An application to read and grep irssi logs.
+
+== Features == 
+
+* View logs listed by Server > Chatroom > Date
+* Grep logs by Server > Chatroom
 
 == Irssi Autolog Configuration ==
+
 This program is designed to work with irssi's logging functionality. 
 
 These are the settings I use for my logs. I find a need for daily log rotation.
