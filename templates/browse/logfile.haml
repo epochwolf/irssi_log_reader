@@ -1,0 +1,9 @@
+%h1 #{@server.name} > #{@chatroom.name} > #{@logfile.name}
+%p 
+  %a{:href => "/browse"} Back
+  |
+  %a{:href => "/browse/#{escape @server.name}"} Back to #{@server.name}
+  |
+  %a{:href => "/browse/#{escape @server.name}/#{escape @chatroom.name}"} Back to #{@chatroom.name}
+
+%pre=h @logfile.safe_read

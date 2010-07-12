@@ -1,0 +1,22 @@
+%h1 #{@server.name} > #{@chatroom.name}
+%p 
+  %a{:href => "/browse"} Back
+  |
+  %a{:href => "/browse/#{escape(@server.name)}"} Back to #{@server.name}
+%ul
+  -prev_year, prev_month = 0,0
+  -@chatroom.each do |logfile|
+    :ruby
+      year, month, day = logfile.name.gsub(/(\d{4})(\d{2})(\d{2})/, "\\1 \\2 \\3").split(' ')
+      message = if year != prev_year
+        prev_year = year
+      elsif month != prev_month
+        prev_month = month
+      else
+        nil
+      end
+    -if message
+      %li
+        %strong #{year} - #{month}
+    %li
+      %a{:href => "/browse/#{escape @server.name}/#{escape @chatroom.name}/#{escape logfile.name}"}=logfile.name

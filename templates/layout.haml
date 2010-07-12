@@ -1,6 +1,15 @@
 %html
   %head
-    %title !Missing Title!
+    %title= defined?(@title) ? @title : "!Missing Title!"
   %body
+    #header
+      %h1 Irssi Log Reader
+      %ul.menu
+        %li
+          %a{:href => "/browse/"} Browse
+        %li 
+          %a{:href => "/grep/"} Grep
+        %li 
+          %a{:href => "/"}
     #container
       = yield

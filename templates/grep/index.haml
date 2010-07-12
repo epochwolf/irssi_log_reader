@@ -1,0 +1,28 @@
+%h1 Grep
+%p 
+  Grep uses the unix egrep tool which supports POSIX Extended Regular Expressions. See this 
+  %a{:href => "http://www.regular-expressions.info/posix.html#ere"} reference
+  for a few details.
+%h2 Available operators
+%ul
+  %li Backslash escapes one metacharacter
+  %li [abc] character class
+  %li [^abc] negated character class
+  %li [a-z] character class range
+  %li . (dot; any character except line break)
+  %li ^ (start of string/line)
+  %li $ (end of string/line)
+  %li | (alternation)
+  %li ? (0 or 1)
+  %li * (0 or more)
+  %li + (1 or more)
+  
+%form{:method => "post", :action => "/grep"}
+  %label{:for => "search"} Grep
+  %input{:type => "grep", :id => "grep", :name => "grep", :value => params[:grep]}
+  %input{:type => "submit", :value => "Grep"}
+  
+-if defined?(@files)
+  -@files.each do |file, lines|
+    %h2=h file
+    %pre=h lines.join("\n")

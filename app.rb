@@ -1,20 +1,32 @@
 #!/usr/bin/env ruby
-require File.join(File.dirname(__FILE__), 'boot')
+require 'rubygems'
+#load sinatra and add local lib folder to include path
+require "sinatra"
+require "haml"
+require 'date'
+
+Encoding.default_external = "ASCII-8BIT" #irc logs tend to have invalid data
+Encoding.default_internal = "UTF-8"
+
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "lib"))
 
 configure do
   set :root, File.dirname(__FILE__)
   set :public, Proc.new { File.join(root, "public") }
   set :views, Proc.new { File.join(root, "templates") }
-  #path to irc logs
-  set :irc_logs_path, "~/programming/test_data/irclogs/"
-  #do you want private messages in logs to be available?
-  set :show_private_chats, false
+  #absolute path to irc logs
+  set :irc_logs_path, "/Users/marquis/programming/test_data/irclogs/"
+  set :show_private_chats, false # TODO: Add server/chatroom whitelist
 end
 
-def testing
-  "<pre>#{$:}</pre>" 
+helpers do
+  include Rack::Utils
+  
+  def h(text)
+    escape_html(text)
+  end
 end
 
 load "controllers/home.rb"
-load "controllers/search.rb"
+load "controllers/grep.rb"
 load "controllers/browse.rb"
