@@ -6,6 +6,7 @@ This program is designed to work with irssi's logging functionality.
 
 These are the settings I use for my logs. I find a need for daily log rotation.
 
+    log_theme = default
     log_timestamp = "%H:%M:%S";
     autolog = ON
     autolog_colors = OFF
