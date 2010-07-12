@@ -36,7 +36,7 @@ def extract_filelist(folder)
   
   # using a *nix system call because Dir.glob may not be thread safe
   
-  str = safe_utf8_exec("ls -1ARp", folder.shellescape)
+  str = safe_utf8_exec("ls -1ARp", folder)
   file_list = {'.' => []}
   
   #the first block contains toplevel folders.

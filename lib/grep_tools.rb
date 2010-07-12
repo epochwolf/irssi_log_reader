@@ -16,14 +16,18 @@ def grep_multiple(folder, search, options={})
   return nil if folder.nil? || search.nil? || !File.directory?(folder)
   folder = folder[0..-2] if folder =~ %r{/$} #remove trailing slash if present
   
-  data = safe_utf8_exec("egrep -r" search.shellescape, folder.shellescape)
+  data = safe_utf8_exec("egrep -r", search, folder)
   
   hash = {}
   
+  #convert data from 
+  # file:line
+  #into 
+  # file => [lines]
   data.each_line do |line|
     file, str = line.split(":", 2)
     hash[file] ||= []
-    hash[file] << safe_encode_utf8(str)
+    hash[file] << str
   end
   
   hash
