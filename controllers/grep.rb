@@ -32,6 +32,7 @@ post %r{/browse/([^/]+)/([^/]+)/?$} do |server, chatroom|
     if@chatroom
       path = File.join(options.irc_logs_path, server, chatroom)
       @files, @benchmark = grep_multiple(path, params[:grep])
+      @files2, @benchmark2 = grep_ruby(@chatroom, params[:grep])
       return haml :"grep/chatroom"
     end
   end
@@ -43,7 +44,8 @@ post %r{/browse/([^/]+)/([^/]+)/([^/]+)/?$} do |server, chatroom, date|
   if @server = @log_list[server]
     if @chatroom = @server[chatroom]
       if @logfile = @chatroom[date]
-        @files, @benchmark = grep_one(@logfile.path, params[:grep])
+        @files, @benchmark = grep_one_ruby(@logfile.path, params[:grep])
+        @files2, @benchmark2 = grep_one(@logfile.path, params[:grep])
         return haml :"grep/logfile"
       end
     end

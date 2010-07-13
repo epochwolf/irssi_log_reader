@@ -31,7 +31,7 @@ module Logs
     end
     
     def to_url
-      "/#{@server_name}"
+      "/#{CGI.escape @server_name}"
     end
   end
   
@@ -47,7 +47,7 @@ module Logs
     end
 
     def to_url
-      "/#{@server_name}/#{@chatroom_name}"
+      "/#{CGI.escape @server_name}/#{CGI.escape @chatroom_name}"
     end
     
     def private?
@@ -71,8 +71,12 @@ module Logs
       @path
     end
     
+    def grep(search)
+      open(self.path) {|file| file.grep(Regexp.new(search)) }
+    end
+    
     def to_url
-      "/#{@server_name}/#{@chatroom_name}/#{@name}"
+      "/#{CGI.escape @server_name}/#{CGI.escape @chatroom_name}/#{CGI.escape @name}"
     end
     
     def safe_read(charset="UTF-8")

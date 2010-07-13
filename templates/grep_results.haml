@@ -1,5 +1,8 @@
 %h2 Results
 %p Scanning logs results took #{@benchmark.format('%r')[1..-2]} seconds
+-if defined?(@benchmark2)
+  %p Scanning logs results using ruby took #{@benchmark2.format('%r')[1..-2]} seconds
+  %p=(@files == @files2) ? "Sets match" : "Sets don't match"
 -unless @files.nil? or @files.empty?
   -@files.each do |file, lines|
     :ruby 
