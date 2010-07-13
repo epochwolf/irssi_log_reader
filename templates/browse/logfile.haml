@@ -1,3 +1,5 @@
+-require 'log_parse'
+
 %h1 #{@server.name} > #{@chatroom.name} > #{@logfile.name}
 %p 
   %a{:href => "/browse"} Back
@@ -6,4 +8,6 @@
   |
   %a{:href => "/browse/#{escape @server.name}/#{escape @chatroom.name}"} Back to #{@chatroom.name}
 
-%pre=h @logfile.safe_read
+.log-contents
+  - @logfile.safe_read.each_line do |line|
+    =log_line_parse(line)

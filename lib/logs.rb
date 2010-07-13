@@ -21,24 +21,33 @@ module Logs
   end
   
   class Server < LogList # array of <Chatroom>
-    def initialize(name, *args)
-      @name = name
+    def initialize(server_name, *args)
+      @server_name = server_name
       super(*args)
     end
     
     def name
-      @name
+      @server_name
+    end
+    
+    def to_url
+      "/#{@server_name}"
     end
   end
   
   class Chatroom < LogList # array of <LogFile>
-    def initialize(name, *args)
-      @name = name
+    def initialize(server_name, chatroom_name, *args)
+      @server_name = server_name
+      @chatroom_name = chatroom_name
       super(*args)
     end
     
     def name
-      @name
+      @chatroom_name
+    end
+
+    def to_url
+      "/#{@server_name}/#{@chatroom_name}"
     end
     
     def private?
@@ -47,8 +56,10 @@ module Logs
   end
   
   class LogFile #proxy to file object with lazy loading
-    def initialize(name, path_with_filename)
-      @name = name
+    def initialize(server_name, chatroom_name, filename, path_with_filename)
+      @server_name = server_name
+      @chatroom_name = chatroom_name
+      @name = filename
       @path = path_with_filename
     end
     
@@ -58,6 +69,10 @@ module Logs
     
     def path
       @path
+    end
+    
+    def to_url
+      "/#{@server_name}/#{@chatroom_name}/#{@name}"
     end
     
     def safe_read(charset="UTF-8")
@@ -85,11 +100,11 @@ module Logs
       srv = Server.new(server) # TYPEERROR HERE
       
       chatrooms.select{|v| v != '.'}.each do |chatroom, logs|
-        cht = Chatroom.new(chatroom)
+        cht = Chatroom.new(server, chatroom)
         
         logs['.'].each do |filename|
           name = filename.gsub(%r{.*?(\d{8})\.log}, '\\1')
-          cht << LogFile.new(name, File.join(folder, server, chatroom, filename))
+          cht << LogFile.new(server, chatroom, name, File.join(folder, server, chatroom, filename))
         end
         
         srv << cht unless cht.empty?

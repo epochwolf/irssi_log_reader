@@ -1,0 +1,29 @@
+.log-contents{
+  font-family: monospace;
+}
+
+.log-contents .highlight{
+    background-color: yellow;
+}
+
+.log-contents .join_part_quit_line{
+    color: gray;
+}
+
+.log-contents .nick_change_line{
+    color: gray;
+}
+
+
+.log-contents .nick_change_line .line-body{
+    font-style: italic;
+}
+
+
+.log-contents .nick_change_line .new_nick,.old_nick{
+    font-style: normal;
+}
+
+.log-contents .action_line .line-body{
+    font-style: italic;
+}
