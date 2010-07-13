@@ -1,8 +1,13 @@
-%h1 #{@server.name} > #{@chatroom.name}
-%p 
-  %a{:href => "/browse"} Back
-  |
-  %a{:href => "/browse/#{escape(@server.name)}"} Back to #{@server.name}
+-@title = "#{@server.name} > #{@chatroom.name}"
+%h1
+  %a{:href => "/browse"} All Servers
+  \>
+  %a{:href => "/browse/#{escape @server.name}"}=@server.name
+  \>
+  =@chatroom.name
+  
+.grep=haml(:grep_form, :layout => false)
+
 %ul
   -prev_year, prev_month = 0,0
   -@chatroom.each do |logfile|

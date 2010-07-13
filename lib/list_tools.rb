@@ -16,12 +16,15 @@ def path_components(path, relative_to = nil)
   path.split('/').select{|v| v != ''} 
 end
 
+#Convert #chatroom_20100707.log to 20100707
+def filename_to_date(filename)
+  filename.gsub(%r{.*?(\d{8})\.log}, '\\1')
+end
+
 # ['FreeNode', '#slicehost', '20100707'] -> /browse/FreeNode/%23slicehost/20100707
 def browse_url_from_components(*args)
   args.map!{|v| CGI.escape(v) }
-  server, chatroom, date = args
-  date.gsub!(%r{.*?(\d{8})\.log}, '\\1')
-  "/browse/#{args.join('/')}"
+  "/browse/#{args[0..-2].join('/')}/#{filename_to_date args.last}"
 end
 
 def url_from_file(file)
@@ -48,7 +51,7 @@ def extract_filelist(folder)
   
   # using a *nix system call because Dir.glob may not be thread safe
   
-  str = safe_utf8_exec("ls -1ARp", folder)
+  str, _ = safe_utf8_exec("ls -1ARp", folder)
   file_list = {'.' => []}
   
   #the first block contains toplevel folders.
@@ -113,7 +116,7 @@ def filelist_to_loglist(hash)
     loglist[server] = {}
     chatrooms.select{|v| v != '.'}.each do |room, logs|
       loglist[server][room] = logs['.'].map do |filename|
-        filename.gsub(%r{.*?(\d{8})\.log}, '\\1')
+        filename_to_date(filename)
       end
     end
   end

@@ -1,0 +1,22 @@
+%form{:method => "post", :action => request.url}
+  -#%label{:for => "search"} Grep 
+  %input{:type => "grep", :id => "grep", :name => "grep", :value => params[:grep]}
+  %input{:type => "submit", :value => "Grep"}
+%p Grep can be very slow, please be patient. 
+
+-# Don't want this showing up yet.
+-# 
+  %ul
+    %li \ escapes one metacharacter
+    %li [abc] character class
+    %li [^abc] negated character class
+    %li [a-z] character class range
+    %li . (dot; any character except line break)
+    %li ^ (start of string/line)
+    %li $ (end of string/line)
+    %li | (alternation)
+    %li ? (0 or 1)
+    %li * (0 or more)
+    %li + (1 or more)
+    %li 
+      %a{:href => "http://www.regular-expressions.info/posix.html#ere"} Reference

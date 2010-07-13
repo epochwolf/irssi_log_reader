@@ -7,7 +7,7 @@ end
 
 # get "/browse" doesn't load on "/browse/" unlike rails, understandable but I want it to load anyway
 # solution: regex 
-get %r{/browse/?$} do 
+get "/browse/?" do 
   haml :"browse/index"
 end
 

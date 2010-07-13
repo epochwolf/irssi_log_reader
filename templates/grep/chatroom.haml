@@ -1,16 +1,14 @@
--require 'log_parse'
--@title = "#{@server.name} > #{@chatroom.name} > #{@logfile.name}"
+-require "log_parse"
+-@title = "#{@server.name} > #{@chatroom.name}"
 %h1
+  Grep:
   %a{:href => "/browse"} All Servers
   \>
   %a{:href => "/browse/#{escape @server.name}"}=@server.name
   \>
   %a{:href => "/browse/#{escape @server.name}/#{escape @chatroom.name}"}=@chatroom.name
-  \>
-  =@logfile.name
 
+%p 
+  %a{:href => "/browse/#{escape @server.name}/#{escape @chatroom.name}"} Back to listing
 .grep=haml(:grep_form, :layout => false)
-
-.log-contents
-  - @logfile.safe_read.each_line do |line|
-    =log_line_parse(line)
+.grep_results=haml(:grep_results, :layout => false)

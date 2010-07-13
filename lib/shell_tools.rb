@@ -1,13 +1,23 @@
 # encoding: utf-8
 # shell_tools.rb
 require "shellwords"
+require 'benchmark'
 
 def safe_utf8_exec(cmd, *args)
+  str = nil
+  benchmark = nil
   if args.empty?
-    safe_encode_utf8(`#{cmd}`)
+    puts "Executing: #{cmd}"
+    benchmark = Benchmark.measure() do
+      str = safe_encode_utf8(`#{cmd}`)
+    end
   else
-    safe_encode_utf8(`#{cmd} #{args.map(&:to_s).map(&:shellescape).join(" ")}`)
+    puts "Executing: #{cmd} #{args.map(&:to_s).map(&:shellescape).join(" ")}"
+    benchmark = Benchmark.measure() do
+      str = safe_encode_utf8(`#{cmd} #{args.map(&:to_s).map(&:shellescape).join(" ")}`)
+    end
   end
+  [str, benchmark]
 end
 
 def safe_encode_utf8(text)

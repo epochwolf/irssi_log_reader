@@ -1,0 +1,22 @@
+%h2 Results
+-unless @files.nil? or @files.empty?
+  -@files.each do |file, lines|
+    :ruby 
+      server, chatroom, filename = path_components(file, options.irc_logs_path)
+      date = filename_to_date(filename)
+      heading = if defined?(@server)
+        "#{chatroom} > #{date}"
+      elsif defined?(@chatroom)
+        date
+      elsif defined?(@logfile)
+        nil
+      else
+        "#{server} > #{chatroom} > #{date}"
+      end
+    -if heading
+      %h3=h heading
+    .log-contents
+      -lines.each do |line|
+        =log_line_parse(line, :link_to_url => url_from_file(file))
+-else
+  %p No results, sorry

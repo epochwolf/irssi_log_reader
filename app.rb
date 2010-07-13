@@ -16,7 +16,7 @@ configure do
   set :views, Proc.new { File.join(root, "templates") }
   #absolute path to irc logs
   set :irc_logs_path, "/Users/marquis/programming/test_data/irclogs/"
-  set :show_private_chats, false # TODO: Add server/chatroom whitelist
+  set :show_private_chats, false # TODO: get this working for browse and grep
 end
 
 helpers do

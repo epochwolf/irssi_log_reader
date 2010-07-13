@@ -3,14 +3,5 @@
     %title= defined?(@title) ? @title : "!Missing Title!"
     %link{:rel => "stylesheet", :type => "text/css", :href=>"/css/main.css"}
   %body
-    #header
-      %h1 Irssi Log Reader
-      %ul.menu
-        %li
-          %a{:href => "/browse/"} Browse
-        %li 
-          %a{:href => "/grep/"} Grep
-        %li 
-          %a{:href => "/"}
     #container
       = yield

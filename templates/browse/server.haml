@@ -1,6 +1,12 @@
-%h1 #{@server.name}
-%p 
-  %a{:href => "/browse"} Back
+-@title = "#{@server.name}"
+%h1
+  %a{:href => "/browse"} All Servers
+  \>
+  =@server.name
+  
+.grep=haml(:grep_form, :layout => false)
+
+%h2 Browse
 %ul
   -prev_year, prev_month = 0, 0
   -@server.each do |chatroom|
