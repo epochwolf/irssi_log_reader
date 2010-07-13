@@ -31,7 +31,7 @@ def log_line_parse(line, options={})
     end
     type = :unknown_line unless type
     date_line = '<span class="line-date">'
-    date_line << %s|<a href="#{options[:link_to_url]}/{hx}">| if options[:link_to_url]
+    date_line << "<a href=\"#{options[:link_to_url]}##{hx}\">" if options[:link_to_url]
     date_line << date
     date_line << '</a>' if options[:link_to_url]
     date_line << '</span>'

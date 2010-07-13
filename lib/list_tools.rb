@@ -16,6 +16,18 @@ def path_components(path, relative_to = nil)
   path.split('/').select{|v| v != ''} 
 end
 
+# ['FreeNode', '#slicehost', '20100707'] -> /browse/FreeNode/%23slicehost/20100707
+def browse_url_from_components(*args)
+  args.map!{|v| CGI.escape(v) }
+  server, chatroom, date = args
+  date.gsub!(%r{.*?(\d{8})\.log}, '\\1')
+  "/browse/#{args.join('/')}"
+end
+
+def url_from_file(file)
+  browse_url_from_components(*path_components(file, options.irc_logs_path))
+end
+
 # Reads directory structure from the harddrive into a hash 
 #     {
 #       '.' => ['list', 'of', 'files'], #root level
@@ -110,7 +122,6 @@ def filelist_to_loglist(hash)
   end
   loglist.select{|server, chatrooms| !chatrooms.empty? }
 end
-
 
 # Accepts a loglist and removes items according a hash matching the format 
 #     {
