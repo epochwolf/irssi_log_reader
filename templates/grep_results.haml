@@ -1,4 +1,5 @@
 %h2 Results
+%p Scanning logs results took #{@benchmark.format('%r')[1..-2]} seconds
 -unless @files.nil? or @files.empty?
   -@files.each do |file, lines|
     :ruby 

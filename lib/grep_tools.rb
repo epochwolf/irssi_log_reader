@@ -41,7 +41,8 @@ def grep_one(file, search, options={})
   file = File.expand_path(file)
   return nil if file.nil? || search.nil? || !File.file?(file)
   
-  data = safe_utf8_exec("egrep ", search, file)
+  data, benchmark  = safe_utf8_exec("egrep ", search, file)
   
   hash = {file => data.split("\n")}
+  [hash, benchmark]
 end
