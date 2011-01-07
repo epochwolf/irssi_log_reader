@@ -1,4 +1,6 @@
 .bundle
+.rvmrc
 log/*.log
 tmp/**/*
+Gemfile.lock
 

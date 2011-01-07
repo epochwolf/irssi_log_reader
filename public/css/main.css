@@ -27,3 +27,11 @@
 .log-contents .action_line .line-body{
     font-style: italic;
 }
+
+.log-contents .line-nick {
+    font-weight: bold;
+} 
+
+.log-contents div:hover{
+    background-color: #eee;
+}

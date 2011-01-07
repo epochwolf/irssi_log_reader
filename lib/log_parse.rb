@@ -4,6 +4,7 @@ def h(line)
   RackUtils.html_escape(line)
 end
 
+# Convert a line from a text log into html
 def log_line_parse(line, options={})
   options={
     :link_to_url => nil, #url /server/#chatroom/00000000
@@ -15,10 +16,10 @@ def log_line_parse(line, options={})
     hx = Digest::MD5.hexdigest(date)
     line = line[8..-1]
     type = case line
-    when /^<.[^>]+>/
-      :message_line
     when /^ * [^ ]+ /
       :action_line
+    when /^<.[^>]+>/
+      :message_line
     when /^-!-/
       case line
       when /now known as/
@@ -61,7 +62,7 @@ end
 
 #15:08:31 * epochwolf pokes soulresin to see if he jiggles
 def action_line(line)
-  nick, message = /^ * ([^ ]+) (.*)$/.match(line).captures
+  nick, message = /^ \* ([^ ]+) (.*)$/.match(line).captures
 <<-END
   <span class="line-nick">#{nick}</span>
   <span class="line-message">

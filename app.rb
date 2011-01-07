@@ -27,6 +27,5 @@ helpers do
   end
 end
 
-load "controllers/home.rb"
 load "controllers/grep.rb"
 load "controllers/browse.rb"

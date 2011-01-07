@@ -84,7 +84,7 @@ module Logs
     end
     
     def to_file
-      @file ||= File.open(@path).set_encoding(:binary)
+      @file ||= File.open(@path).set_encoding("ASCII-8BIT")
     end
     
     def method_missing(*args)
