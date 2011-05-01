@@ -7,7 +7,7 @@ end
 # Convert a line from a text log into html
 def log_line_parse(line, options={})
   options={
-    :link_to_url => nil, #url /server/#chatroom/00000000
+    :link_to_url => nil, #url /browse/server/#chatroom/00000000
   }.update options
   if line =~ /^---/
     "" #strip log open/close stuff. 

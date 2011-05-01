@@ -1,4 +1,5 @@
-require "grep_tools"
+require "logs" unless defined?(LogFile)
+
 
 post "/" do 
   haml :"grep/index"
@@ -11,6 +12,8 @@ post %r{^/browse/([^/]+)/?$} do |server|
   if @server.nil?
     haml :missing
   else
+    @server.grep(params[:grep])
+    @results = grep_multiple(@server.path, params[:grep])
     haml :"grep/server"
   end
 end
@@ -21,7 +24,8 @@ post %r{^/browse/([^/]+)/([^/]+)/?$} do |server, chatroom|
   @server = @log_list[server]
   if @server
     @chatroom = @server[chatroom]
-    if@chatroom
+    if @chatroom
+      @results = grep_multiple(@chatroom.path, params[:grep])
       return haml :"grep/chatroom"
     end
   end
@@ -33,6 +37,7 @@ post %r{^/browse/([^/]+)/([^/]+)/([^/]+)/?$} do |server, chatroom, date|
   if @server = @log_list[server]
     if @chatroom = @server[chatroom]
       if @logfile = @chatroom[date]
+        @results = grep_one(@logfile.path, params[:grep])
         return haml :"grep/logfile"
       end
     end

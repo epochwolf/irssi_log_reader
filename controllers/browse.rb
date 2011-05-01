@@ -10,9 +10,12 @@ get "/" do
   haml :"browse/index"
 end
 
+get %r{^/browse/?} do
+  redirect "/"
+end
+
 # /server
 get %r{^/browse/([^/]+)/?$} do |server|
-
   @server = @log_list[server]
   if @server.nil?
     haml :missing

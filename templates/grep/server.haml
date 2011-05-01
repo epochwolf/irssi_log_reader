@@ -7,5 +7,5 @@
   %a{:href => "/browse/#{escape @server.name}"}=@server.name
 %p 
   %a{:href => "/browse/#{escape @server.name}"} Back to listing
-.grep=haml(:grep_form, :layout => false)
-.grep_results=haml(:grep_results, :layout => false)
+=haml(:grep_form, :layout => false)
+=erb(:grep_results, :layout => false, :locals => {:results => @results})

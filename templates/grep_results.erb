@@ -1,0 +1,9 @@
+<pre class="grep-results"><% hash, benchmark = results
+hash.each do |url, lines|
+  lines.each do |line| 
+%><a href="<%=url %>"><%=unescape url.gsub(%r|^/browse/|, '') %></a>
+<%=h(line).gsub(/#{params[:grep]}/, '<span class="grep">\0</span>') %>
+<% 
+end
+end %>
+</pre>

@@ -1,6 +1,7 @@
 # encoding: utf-8
-require "list_tools"
+require "grep_tools"
 require "cgi"
+
 
 module Logs
   def self.from_folder(folder)
@@ -10,6 +11,8 @@ module Logs
   end
   
   class LogList < Array
+    attr_accessor :name,:grep_string, :grep_results, :path
+    
     def [](*args)
       if args.first.is_a? String
         self.find {|v| v.name == args.first }
@@ -18,16 +21,28 @@ module Logs
       end
     end
     
+    protected
+    def with_cache(search, reload=false)
+      if reload || search != @grep_string
+        @grep_string = search
+        @grep_results = yield
+      end
+      @grep_results
+    end
   end
   
   class Server < LogList # array of <Chatroom>
-    def initialize(server_name, *args)
-      @server_name = server_name
+    def initialize(folder, server_name, *args)
+      @name = server_name
+      @path = File.join(folder, server_name)
+      @grep_results = nil
       super(*args)
     end
     
-    def name
-      @server_name
+    def grep(search)
+      with_cache(search) do
+        reject{|chatroom| chatroom.grep(search).empty? }
+      end
     end
     
     def to_url
@@ -36,18 +51,22 @@ module Logs
   end
   
   class Chatroom < LogList # array of <LogFile>
-    def initialize(server_name, chatroom_name, *args)
+    attr_reader :server_name
+    def initialize(folder, server_name, chatroom_name, *args)
       @server_name = server_name
-      @chatroom_name = chatroom_name
+      @name = chatroom_name
+      @path = File.join(folder, server_name, chatroom_name)
       super(*args)
     end
     
-    def name
-      @chatroom_name
+    def grep(search)
+      with_cache(search) do
+        reject{|logfile| logfile.grep(search).empty? }
+      end
     end
 
     def to_url
-      "/#{CGI.escape @server_name}/#{CGI.escape @chatroom_name}"
+      "/#{CGI.escape @server_name}/#{CGI.escape @name}"
     end
     
     def private?
@@ -56,23 +75,22 @@ module Logs
   end
   
   class LogFile #proxy to file object with lazy loading
-    def initialize(server_name, chatroom_name, filename, path_with_filename)
+    attr_reader :name, :path, :date, :grep_string, :grep_results, :server_name, :chatroom_name
+    def initialize(folder, server_name, chatroom_name, filename, path_with_filename)
       @server_name = server_name
       @chatroom_name = chatroom_name
       @name = filename
       @path = path_with_filename
-    end
-    
-    def name
-      @name
-    end
-    
-    def path
-      @path
+      @date = begin
+        date = filename_to_date(@name)
+        Time.new(date[0..3], date[4..5], date[6..8])
+      end
     end
     
     def grep(search)
-      open(self.path) {|file| file.grep(Regexp.new(search)) }
+      with_cache(search) do
+        open(self.path) {|file| file.grep(Regexp.new(search)) }
+      end
     end
     
     def to_url
@@ -90,6 +108,15 @@ module Logs
     def method_missing(*args)
       to_file.send(*args)
     end
+    
+    protected
+    def with_cache(search, reload=false)
+      if reload || search != @grep_string
+        @grep_string = search
+        @grep_results = yield
+      end
+      @grep_results
+    end
   end
   
   
@@ -101,14 +128,14 @@ module Logs
   def self.build_objects(folder, filelist)
     arr = LogList.new
     filelist.select{|v| v != '.'}.each do |server, chatrooms|
-      srv = Server.new(server) # TYPEERROR HERE
+      srv = Server.new(folder, server) # TYPEERROR HERE
       
       chatrooms.select{|v| v != '.'}.each do |chatroom, logs|
-        cht = Chatroom.new(server, chatroom)
+        cht = Chatroom.new(folder, server, chatroom)
         
         logs['.'].each do |filename|
           name = filename.gsub(%r{.*?(\d{8})\.log}, '\\1')
-          cht << LogFile.new(server, chatroom, name, File.join(folder, server, chatroom, filename))
+          cht << LogFile.new(folder, server, chatroom, name, File.join(folder, server, chatroom, filename))
         end
         
         srv << cht unless cht.empty?

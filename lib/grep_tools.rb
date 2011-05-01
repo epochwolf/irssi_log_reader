@@ -8,16 +8,13 @@ require 'list_tools' # for path_components
 
 #using egrep for search
 
-def grep_multiple(folder, search, options={})
-  options = {
-    :extended => true,
-  }.update options
+def grep_multiple(folder, search)
 
   folder = File.expand_path(folder)
   return nil if folder.nil? || search.nil? || !File.directory?(folder)
   folder = folder[0..-2] if folder =~ %r{/$} #remove trailing slash if present
   
-  data, benchmark = safe_utf8_exec("egrep -r", search, folder)
+  data, benchmark = safe_utf8_exec(options.grep_folder, search, folder)
   
   hash = {}
   
@@ -27,6 +24,7 @@ def grep_multiple(folder, search, options={})
   # file => [lines]
   data.each_line do |line|
     file, str = line.split(":", 2)
+    file = url_from_file(file)
     hash[file] ||= []
     hash[file] << str
   end
@@ -62,22 +60,19 @@ def grep_ruby(loglist, search, options={})
       open(file) do |io|
         data = io.grep(rxp)
       end
-      hash[file.path] = data
+      hash[file] = data
     end
   end
   hash
 end
 
-def grep_one(file, search, options={})
-  options = {
-    :extended => true,
-  }.update options
-
+def grep_one(file, search)
   file = File.expand_path(file)
   return nil if file.nil? || search.nil? || !File.file?(file)
   hash = {}
   benchmark = Benchmark.measure() do
-    data, _  = safe_utf8_exec("egrep ", search, file)
+    data, _  = safe_utf8_exec(options.grep_file, search, file)
+    file = url_from_file(file)
     hash[file] = data.split("\n")
   end
   [hash, benchmark]

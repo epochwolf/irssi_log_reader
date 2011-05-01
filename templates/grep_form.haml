@@ -1,8 +1,9 @@
-%form{:method => "post", :action => request.url}
-  -#%label{:for => "search"} Grep 
-  %input{:type => "grep", :id => "grep", :name => "grep", :value => params[:grep]}
-  %input{:type => "submit", :value => "Grep"}
-%p Grep can be very slow, please be patient. 
+.grep
+  %form{:method => "post", :action => request.url}
+    -#%label{:for => "search"} Grep 
+    %input{:type => "grep", :id => "grep", :name => "grep", :value => params[:grep]}
+    %input{:type => "submit", :value => "Grep"}
+  %p Grep can be very slow, please be patient. 
 
 -# Don't want this showing up yet.
 -# 

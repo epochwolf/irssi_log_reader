@@ -35,3 +35,7 @@
 .log-contents div:hover{
     background-color: #eee;
 }
+
+.grep-results .grep{
+  background-color: lightblue;
+}

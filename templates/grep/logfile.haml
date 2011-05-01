@@ -2,19 +2,14 @@
 -@title = "#{@server.name} > #{@chatroom.name} > #{@logfile.name}"
 %h1
   Grep:
-  %a{:href => "/"} All Servers
+  %a{:href => "/browse"} All Servers
   \>
-  %a{:href => "/#{escape @server.name}"}=@server.name
+  %a{:href => "/browse/#{escape @server.name}"}=@server.name
   \>
-  %a{:href => "/#{escape @server.name}/#{escape @chatroom.name}"}=@chatroom.name
+  %a{:href => "/browse/#{escape @server.name}/#{escape @chatroom.name}"}=@chatroom.name
   \>
-  %a{:href => "/#{escape @server.name}/#{escape @chatroom.name}/#{escape @logfile.name}"}=@logfile.name
+  %a{:href => "/browse/#{escape @server.name}/#{escape @chatroom.name}/#{escape @logfile.name}"}=@logfile.name
 
-%a{:href => "/#{escape @server.name}/#{escape @chatroom.name}/#{escape @logfile.name}"} Back to listing
-.grep=haml(:grep_form, :layout => false)
-.grep_results
-  %h2 Results
-  
-  .log-contents
-    -lines.each do |line|
-      =log_line_parse(line, :link_to_url => url_from_file(file))
+%a{:href => "/browse/#{escape @server.name}/#{escape @chatroom.name}/#{escape @logfile.name}"} Back to listing
+=haml(:grep_form, :layout => false)
+=erb(:grep_results, :layout => false, :locals => {:results => @results})

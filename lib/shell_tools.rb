@@ -20,6 +20,7 @@ def safe_utf8_exec(cmd, *args)
   [str, benchmark]
 end
 
+# Destructive conversion to utf8
 def safe_encode_utf8(text)
   text.force_encoding('ASCII-8BIT').encode("UTF-8", :invalid => :replace, :undef => :replace, :universal_newline => true)
 end
