@@ -6,7 +6,7 @@ end
 
 
 # /browse/server
-post %r{/([^/]+)/?$} do |server|
+post %r{^/browse/([^/]+)/?$} do |server|
   @server = @log_list[server]
   if @server.nil?
     haml :missing
@@ -17,7 +17,7 @@ end
 
 #need regex'd routes because sinatra hates escaped #'s in the url
 # /browse/server/#chatroom
-post %r{/([^/]+)/([^/]+)/?$} do |server, chatroom|
+post %r{^/browse/([^/]+)/([^/]+)/?$} do |server, chatroom|
   @server = @log_list[server]
   if @server
     @chatroom = @server[chatroom]
@@ -29,7 +29,7 @@ post %r{/([^/]+)/([^/]+)/?$} do |server, chatroom|
 end
 
 # /browse/server/#chatroom/date
-post %r{/([^/]+)/([^/]+)/([^/]+)/?$} do |server, chatroom, date|
+post %r{^/browse/([^/]+)/([^/]+)/([^/]+)/?$} do |server, chatroom, date|
   if @server = @log_list[server]
     if @chatroom = @server[chatroom]
       if @logfile = @chatroom[date]
